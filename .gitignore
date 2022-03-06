@@ -130,3 +130,6 @@ dmypy.json
 
 # png
 *.png
+
+# idea
+.idea/
