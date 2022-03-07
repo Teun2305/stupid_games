@@ -1,4 +1,5 @@
 import numpy as np
+from random import  randint
 
 BOARD_SIZE = 4
 GAME_N = 3
@@ -32,8 +33,8 @@ class PlayerInterface:
 
 class HumanPlayer(PlayerInterface):
     def set_name(self):
-        #return input(f"Player {self._symbol}, what is your name? >> ")
-        return "Teun"
+        return input(f"Player {self._symbol}, what is your name? >> ")
+        # return "Teun"
 
     def play(self):
         # Can raise ValueError
@@ -52,7 +53,7 @@ class MiniMaxPlayer(PlayerInterface):
         TODO: add call to MiniMax algorithm
         TODO: write MiniMax algorithm
         """
-        pass
+        return randint(1, BOARD_SIZE**2)
 
 
 class Board:
@@ -184,6 +185,10 @@ class Board:
     def play_board(self, selected_square, player):
         row, column = selected_square
         self.__board[row][column] = player
+        
+    def move_is_valid(self, selected_square):
+        row, column = selected_square
+        return self.__board[row][column] == 0
     
     def __str__(self): 
         t = u"\u2550"*3
@@ -205,10 +210,32 @@ class Board:
         # Bottom Row        
         string += u"\u255A" + (t + u"\u2569")*(BOARD_SIZE - 1) + t + u"\u255D\n"    
         return string
+    
+class Game:
+    def __init__(self):
+        self.__player1 = HumanPlayer('X')
+        self.__player2 = MiniMaxPlayer('O')
+        self.__board = Board()
+        self.__game_over = False
+        self.__player_won = None
         
+    def play_game(self):
+        print('The game is about to start, do you want to read through the rules first?', end=' ')
+        if self.__yes_no_input() == 'y':
+            print('Just google them then')
+            
+        while not self.__game_over:
+            pass
+        
+    def yes_no_input(self):
+        try:
+            response = input('[y/n] >> ').lower()
+            assert response == 'y' or response == 'n'
+            return response
+        except AssertionError:
+            print('Invalid input, please enter y or n.')
+            return self.__yes_no_input()
+            
 
 if __name__ == '__main__':
-    player = HumanPlayer('X')
-    board = Board()
-    board.play_board(player.play(), player)
-    print(board)
+    pass
