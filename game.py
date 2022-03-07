@@ -1,6 +1,6 @@
 import numpy as np
 
-BOARD_SIZE = 3
+BOARD_SIZE = 4
 GAME_N = 3
 
 
@@ -32,12 +32,12 @@ class PlayerInterface:
 
 class HumanPlayer(PlayerInterface):
     def set_name(self):
+        #return input(f"Player {self._symbol}, what is your name? >> ")
         return "Teun"
-        # return input(f"Player {self._symbol}, what is your name? >> ")
 
     def play(self):
         # Can raise ValueError
-        number = int(input(f"{self._name}, which square would you like to play? >> "))
+        number = int(input(f"{self._name}, which square would you like to play? >> ")) - 1
         row = number // BOARD_SIZE
         column = number % BOARD_SIZE
         return row, column
@@ -76,12 +76,38 @@ class Board:
         return self.__board.copy()
 
     def is_winner(self, player):
-        self.__board[0][2] = player
-        self.__board[1][1] = player
-        self.__board[2][0] = player
+        """
+        checks whether a players has won the game
+
+        Parameters
+        ----------
+        player : PlayerInterface
+            the player for who to check
+
+        Returns
+        -------
+        bool
+            player has won
+
+        """
         return self.__hori_vert_winner(player) or self.__digonal_winner(player)
     
-    def __hori_vert_winner(self, player):
+    def __hori_vert_winner(self, player):        
+        """
+        checks whether a player has won
+        by lineing up squares horizontally or vertically
+
+        Parameters
+        ----------
+        player : PlayerInterface
+            the player for who to check
+
+        Returns
+        -------
+        bool
+            player has won by placing sqaures horizontally or vertically
+
+        """
         # Checking for each row
         for row in self.__board:
             if self.__has_winner(row, player):
@@ -93,6 +119,21 @@ class Board:
         return False
     
     def __digonal_winner(self, player):
+        """
+        checks whether a player has won
+        by lineing up squares diagonally
+
+        Parameters
+        ----------
+        player : PlayerInterface
+            the player for who to check
+
+        Returns
+        -------
+        bool
+            player has won by placing sqaures diagonally
+
+        """
         # Top left to bottom right
         for row in range(BOARD_SIZE - GAME_N + 1):
             for column in range(BOARD_SIZE - GAME_N + 1):
@@ -113,6 +154,23 @@ class Board:
         return False
                     
     def __has_winner(self, array, player):
+        """
+        counts the amount of consecutive squares a player 
+        has in an input list
+
+        Parameters
+        ----------
+        array : list
+            1-D list consisting of zeroes and PlayerInterfaces
+        player : PlayerInterface
+            the player for who to check
+
+        Returns
+        -------
+        bool
+            player has a GAME_N amount of consecutive squares
+
+        """
         counter = 0
         for element in array:
             if element == player:
@@ -122,8 +180,35 @@ class Board:
             if counter == GAME_N:
                 return True
         return False
+    
+    def play_board(self, selected_square, player):
+        row, column = selected_square
+        self.__board[row][column] = player
+    
+    def __str__(self): 
+        t = u"\u2550"*3
+        l = u"\u2551"
+        string = ""
+        # Top row
+        string += u"\u2554" + (t + u"\u2566")*(BOARD_SIZE - 1) + t + u"\u2557\n"
+        
+        # Body of the board
+        for i, row in enumerate(self.__board):
+            for column in row:
+                if column == 0:
+                    string += l + "   "
+                else:
+                    string += l + " " + str(column) + " "
+            string += l + "\n"
+            if i < BOARD_SIZE - 1:
+                string += u"\u2560" + (t + u"\u256C")*(BOARD_SIZE - 1) + t + u"\u2563\n"
+        # Bottom Row        
+        string += u"\u255A" + (t + u"\u2569")*(BOARD_SIZE - 1) + t + u"\u255D\n"    
+        return string
+        
 
 if __name__ == '__main__':
-    board = Board()
     player = HumanPlayer('X')
-    print(board.is_winner(player))
+    board = Board()
+    board.play_board(player.play(), player)
+    print(board)
