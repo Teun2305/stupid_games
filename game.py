@@ -37,7 +37,10 @@ class HumanPlayer(PlayerInterface):
 
     def play(self):
         # Can raise ValueError
-        return int(input(f"{self._name}, which square would you like to play? >> "))
+        number = int(input(f"{self._name}, which square would you like to play? >> "))
+        row = number // BOARD_SIZE
+        column = number % BOARD_SIZE
+        return row, column
 
 
 class MiniMaxPlayer(PlayerInterface):
@@ -119,8 +122,6 @@ class Board:
             if counter == GAME_N:
                 return True
         return False
-            
-
 
 if __name__ == '__main__':
     board = Board()
