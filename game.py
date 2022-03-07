@@ -24,3 +24,25 @@ class PlayerInterface:
         if isinstance(other, self.__class__):
             return self.__symbol == other.get_symbol()
         return False
+
+class HumanPlayer(PlayerInterface):
+    def set_name(self):
+        return input(f"Player {self.__symbol}, what is your name?")
+
+    def play(self):
+        # Can raise ValueError
+        return int(input(f"{self.__name}, which square would you like to play?"))
+
+class MiniMaxPlayer(PlayerInterface):
+    def set_name(self):
+        return "MiniMax"
+
+    def play(self):
+        """
+        TODO: add call to MiniMax algorithm
+        TODO: write MiniMax algorithm
+        """
+        pass
+
+if __name__ == '__main__':
+    pass
