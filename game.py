@@ -2,8 +2,8 @@ import numpy as np
 from random import  randint
 from time import sleep
 
-BOARD_SIZE = 4
-GAME_N = 3
+BOARD_SIZE = 10
+GAME_N = 5
 
 
 class PlayerInterface:
@@ -148,7 +148,7 @@ class Board:
     
         # Top right to bottom left
         for row in range(BOARD_SIZE - GAME_N + 1):
-            for column in range(BOARD_SIZE - GAME_N + 2, BOARD_SIZE):
+            for column in range(GAME_N - 1, BOARD_SIZE):
                 array = []
                 for i in range(GAME_N):
                     array.append(self.__board[row + i][column - i])
@@ -285,4 +285,4 @@ if __name__ == '__main__':
         print("Do you want to play another game?", end="")
         if yes_no_input() == 'n':
             break
-    print("Fuck you!")
+    print("Fuck off!")
