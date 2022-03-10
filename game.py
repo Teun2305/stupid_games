@@ -127,8 +127,21 @@ class Board:
             self.__board = board
 
     def reset_board(self):
-        """assigns a matrix (of size BOARD_SIZE x BOARD_SIZE), which contains only zeroes to the attribute board"""
-        self.__board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=PlayerInterface)
+        """
+        creates an list from 1 to BOARD_SIZE and assigns it to the attribute board
+        the list is 2d with each list having a length of BOARD_SIZE
+
+        """
+        number = 1
+        next_board = []
+        for i in range(BOARD_SIZE):
+            arr = []
+            for j in range(BOARD_SIZE):
+                arr.append(number)
+                number += 1
+            next_board.append(arr)
+            
+        self.__board = np.array(next_board, dtype=object)
 
     def get_board(self):
         """getter of the attribute board"""
@@ -202,7 +215,7 @@ class Board:
             for column in range(BOARD_SIZE - GAME_N + 1):
                 array = []
                 for i in range(GAME_N):
-                    array.append(self.__board[row + i][column + i])
+                    array.append(self.__board[row + i, column + i])
                 if self.__has_winner(array, player):
                     return True
     
@@ -211,7 +224,7 @@ class Board:
             for column in range(GAME_N - 1, BOARD_SIZE):
                 array = []
                 for i in range(GAME_N):
-                    array.append(self.__board[row + i][column - i])
+                    array.append(self.__board[row + i, column - i])
                 if self.__has_winner(array, player):
                     return True
         return False
@@ -256,7 +269,7 @@ class Board:
             player which has to be placed on the board
         """
         row, column = selected_square
-        self.__board[row][column] = player
+        self.__board[row, column] = player
         
     def move_is_valid(self, selected_square):
         """
@@ -274,7 +287,7 @@ class Board:
 
         """
         row, column = selected_square
-        return self.__board[row][column] == 0
+        return isinstance(self.__board[row, column], int)
     
     def is_full(self):
         """
@@ -288,14 +301,14 @@ class Board:
         """
         for row in self.__board:
             for column in row:
-                if column == 0:
+                if isinstance(column, int):
                     return False
         return True
     
     def __str__(self):
         """"dunder method str"""
-        t = u'\u2550'*3
-        l = u'\u2551'
+        t = u'\u2550'*3         # Three horizontal, double lines
+        l = u'\u2551'           # One vertical double line
         string = ''
         # Top row
         string += u'\u2554' + (t + u'\u2566')*(BOARD_SIZE - 1) + t + u'\u2557\n'
@@ -303,10 +316,18 @@ class Board:
         # Body of the board
         for i, row in enumerate(self.__board):
             for column in row:
-                if column == 0:
-                    string += l + '   '
+                nr_digits = len(str(column))
+                if isinstance(column, int):
+                    if nr_digits == 1:
+                        string += l + f' {column} '
+                    elif nr_digits == 2:
+                       string += l + f'{column} '
+                    elif nr_digits == 3:
+                        string += l + f'{column}'
+                    else:
+                        raise ValueError('Your board size is too large.')
                 else:
-                    string += l + ' ' + str(column) + ' '
+                    string += l + ' {} '.format(column)
             string += l + '\n'
             if i < BOARD_SIZE - 1:
                 string += u'\u2560' + (t + u'\u256C')*(BOARD_SIZE - 1) + t + u'\u2563\n'
@@ -338,7 +359,7 @@ class Game:
         player_turn = self.__player1
         while not self.__board.is_full():
             # Printing board and info
-            print('<>'*10)
+            print('>'*10 + '<'*10)
             print(f'{player_turn.get_name()}, it is your turn.')
             print(self.__board)
             
