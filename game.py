@@ -1,4 +1,6 @@
 import numpy as np
+from random import randint
+from time import sleep
 
 BOARD_SIZE = 3  # Size of one size of the board, the board is always a square
 GAME_N = 3  # Amount of squares in a line needed to win
@@ -177,6 +179,7 @@ class MiniMaxPlayer(PlayerInterface):
             column of the next move's square
 
         """
+        sleep(randint(4, 8)*0.1)
         return self.__minimax(board, True, float('-inf'), float('inf'))[1]
 
 
