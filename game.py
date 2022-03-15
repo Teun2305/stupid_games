@@ -3,7 +3,7 @@ from random import randint
 from time import sleep
 
 BOARD_SIZE = 3  # Size of one size of the board, the board is always a square
-GAME_N = 3  # Amount of squares in a line needed to win
+GAME_N = 3      # Amount of squares in a line needed to win
 
 
 class PlayerInterface:
@@ -133,7 +133,6 @@ class MiniMaxPlayer(PlayerInterface):
         if maximizing:  # Maximizing player
             value = float('-inf')
             move = None
-            alpha = float('-inf')
             for row in range(BOARD_SIZE):
                 for column in range(BOARD_SIZE):
                     square = row, column
