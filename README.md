@@ -1,1 +1,1 @@
-# Tic-Tac-No
+# Repository of little games I made using python
