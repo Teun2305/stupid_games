@@ -1,1 +1,1 @@
-# Repository of little games I made using python
+# Little games I made using python
