@@ -1,5 +1,4 @@
 import numpy as np
-from random import randint
 from time import sleep
 
 BOARD_SIZE = 3  # Size of one size of the board, the board is always a square
@@ -144,9 +143,11 @@ class MiniMaxPlayer(PlayerInterface):
                         if new_value > value:
                             value = new_value
                             move = square
+                        # Alpha-Beta pruning step
                         if alpha >= beta:
                             return value, move
             return value, move
+        
         else:  # Minimizing player
             value = float('inf')
             move = None
@@ -161,6 +162,7 @@ class MiniMaxPlayer(PlayerInterface):
                         if new_value < value:
                             value = new_value
                             move = square
+                        # Alpha-Beta pruning step
                         if alpha >= beta:
                             return value, move
 
@@ -178,7 +180,7 @@ class MiniMaxPlayer(PlayerInterface):
             column of the next move's square
 
         """
-        sleep(randint(4, 8)*0.1)
+        sleep(2)
         return self.__minimax(board, True, float('-inf'), float('inf'))[1]
 
 
@@ -448,7 +450,15 @@ class Game:
 
     def play_game(self):
         """the turn-based game logic is defined in this function"""
-        player_turn = self.__player1
+        # Set the starting player
+        print('Would you like to go first?', end='')
+        start = yes_no_input()
+        if start =='y':
+            player_turn = self.__player1
+        else:
+            player_turn = self.__player2
+        
+        # One iteration of this loop is one player's turn
         while not self.__board.is_full():
             # Printing board and info
             print('>' * 10 + '<' * 10)
@@ -465,7 +475,8 @@ class Game:
             else:
                 player_turn = self.__player1
 
-        # Printing final messages        
+        # Printing final messages
+        print('>' * 10 + '<' * 10)        
         print(self.__board)
         if self.__board.is_full():
             print('It\'s a draw!!!')
@@ -536,7 +547,7 @@ if __name__ == '__main__':
         print(f'The top left number is 1 and the bottom right number is {BOARD_SIZE ** 2}.')
         print('If you don\'t understand the basic rules of Tic Tac Toe, just google them.')
 
-    # Plays a game until the user's had enough
+    # Plays a game untill the user's had enough
     while True:
         game = Game()
         game.play_game()
