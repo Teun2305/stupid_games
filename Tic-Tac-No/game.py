@@ -7,22 +7,22 @@ GAME_N = 3      # Amount of squares in a line needed to win
 
 class PlayerInterface:
     """
-    Interface for Human and AI players
-    
+    Interface for Human and AI players.
+
     attributes:
         symbol (str):
             symbol of the player, used for representing a player-square
         name (str):
-            player's name        
+            player's name
     """
 
     def __init__(self, symbol):
-        """"constructor"""
+        """"Constructor."""
         self._symbol = symbol
         self._name = self.set_name()
 
     def get_name(self):
-        """"getter of the attribute name"""
+        """"Getter of the attribute name."""
         return self._name
 
     def set_name(self):
@@ -72,7 +72,8 @@ class HumanPlayer(PlayerInterface):
             column of the next move's square
 
         """
-        number = int(input(f'{self._name}, which square would you like to play? >> ')) - 1
+        number = int(
+            input(f'{self._name}, which square would you like to play? >> ')) - 1
         return number // BOARD_SIZE, number % BOARD_SIZE
 
 
@@ -100,7 +101,7 @@ class MiniMaxPlayer(PlayerInterface):
     def __minimax(self, board, maximizing, alpha, beta):
         """
         applying minimax (with alpha-beta pruning) on the game
-        this implementation does not have a max depth, so it will 
+        this implementation does not have a max depth, so it will
         become very slow when expanding the board size
 
         Parameters
@@ -138,7 +139,8 @@ class MiniMaxPlayer(PlayerInterface):
                     if board.move_is_valid(square):
                         new_board = board.get_board_copy()
                         new_board.play_board(square, self)
-                        new_value, new_move = self.__minimax(new_board, not maximizing, alpha, beta)
+                        new_value, new_move = self.__minimax(
+                            new_board, not maximizing, alpha, beta)
                         alpha = max(new_value, alpha)
                         if new_value > value:
                             value = new_value
@@ -147,7 +149,7 @@ class MiniMaxPlayer(PlayerInterface):
                         if alpha >= beta:
                             return value, move
             return value, move
-        
+
         else:  # Minimizing player
             value = float('inf')
             move = None
@@ -157,7 +159,8 @@ class MiniMaxPlayer(PlayerInterface):
                     if board.move_is_valid(square):
                         new_board = board.get_board_copy()
                         new_board.play_board(square, self.__other_player)
-                        new_value, new_move = self.__minimax(new_board, not maximizing, alpha, beta)
+                        new_value, new_move = self.__minimax(
+                            new_board, not maximizing, alpha, beta)
                         beta = min(new_value, beta)
                         if new_value < value:
                             value = new_value
@@ -187,7 +190,7 @@ class MiniMaxPlayer(PlayerInterface):
 class Board:
     """
     Class representing a the playing board
-    
+
     attributes:
         board (2d list):
             matrix of size BOARD_SIZE x BOARD_SIZE representing the playing board
@@ -399,11 +402,12 @@ class Board:
 
     def __str__(self):
         """"dunder method str"""
-        t = u'\u2550' * 3  # Three horizontal, double lines
-        l = u'\u2551'  # One vertical double line
+        t = u'\u2550' * 3   # Three horizontal, double lines
+        l = u'\u2551'       # One vertical double line
         string = ''
         # Top row
-        string += u'\u2554' + (t + u'\u2566') * (BOARD_SIZE - 1) + t + u'\u2557\n'
+        string += u'\u2554' + (t + u'\u2566') * \
+            (BOARD_SIZE - 1) + t + u'\u2557\n'
 
         # Body of the board
         for i, row in enumerate(self.__board):
@@ -422,16 +426,18 @@ class Board:
                     string += l + ' {} '.format(column)
             string += l + '\n'
             if i < BOARD_SIZE - 1:
-                string += u'\u2560' + (t + u'\u256C') * (BOARD_SIZE - 1) + t + u'\u2563\n'
-        # Bottom Row        
-        string += u'\u255A' + (t + u'\u2569') * (BOARD_SIZE - 1) + t + u'\u255D'
+                string += u'\u2560' + (t + u'\u256C') * \
+                    (BOARD_SIZE - 1) + t + u'\u2563\n'
+        # Bottom Row
+        string += u'\u255A' + (t + u'\u2569') * \
+            (BOARD_SIZE - 1) + t + u'\u255D'
         return string
 
 
 class Game:
     """"
     Class containing the game logic
-    
+
     attributes:
         player1 (PlayerInterface):
             the first player of the game
@@ -442,22 +448,22 @@ class Game:
     """
 
     def __init__(self):
-        """initializes the players and board. Initilizes one human and one AI player"""
+        """Initializes the players and board. Initilizes one human and one AI player."""
         self.__player1 = HumanPlayer(u'\u00D7')
         self.__player2 = MiniMaxPlayer(u'\u25CB')
         self.__player2.set_other_player(self.__player1)
         self.__board = Board()
 
     def play_game(self):
-        """the turn-based game logic is defined in this function"""
+        """The turn-based game logic is defined in this function."""
         # Set the starting player
         print('Would you like to go first?', end='')
         start = yes_no_input()
-        if start =='y':
+        if start == 'y':
             player_turn = self.__player1
         else:
             player_turn = self.__player2
-        
+
         # One iteration of this loop is one player's turn
         while not self.__board.is_full():
             # Printing board and info
@@ -476,7 +482,7 @@ class Game:
                 player_turn = self.__player1
 
         # Printing final messages
-        print('>' * 10 + '<' * 10)        
+        print('>' * 10 + '<' * 10)
         print(self.__board)
         if self.__board.is_full():
             print('It\'s a draw!!!')
@@ -512,14 +518,15 @@ class Game:
             print('Please enter a NUMBER.')
             return self.__get_turn(player)
         except AssertionError:
-            print(f'Please enter a number between 0 and {BOARD_SIZE ** 2 + 1}.')
+            print(
+                f'Please enter a number between 0 and {BOARD_SIZE ** 2 + 1}.')
             print('If a square is already taken, you cannot play it again.')
             return self.__get_turn(player)
 
 
 def yes_no_input():
     """
-    asks the user a yes-ir-no question
+    Asks the user a yes-or-no question.
 
     Returns
     -------
@@ -544,7 +551,8 @@ if __name__ == '__main__':
     if yes_no_input() == 'y':
         print('Selecting a square is done by entering the number of that square.')
         print('The number corresponds to its position on the board.')
-        print(f'The top left number is 1 and the bottom right number is {BOARD_SIZE ** 2}.')
+        print(
+            f'The top left number is 1 and the bottom right number is {BOARD_SIZE ** 2}.')
         print('If you don\'t understand the basic rules of Tic Tac Toe, just google them.')
 
     # Plays a game untill the user's had enough
