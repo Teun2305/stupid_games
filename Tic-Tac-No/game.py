@@ -9,7 +9,7 @@ class PlayerInterface:
     """
     Interface for Human and AI players.
 
-    attributes:
+    Attributes:
         symbol (str):
             symbol of the player, used for representing a player-square
         name (str):
@@ -26,25 +26,25 @@ class PlayerInterface:
         return self._name
 
     def set_name(self):
-        """"setter of the attribute name"""
+        """"Setter of the attribute name."""
         pass
 
     def get_symbol(self):
-        """"getter of the attribute symbol"""
+        """"Getter of the attribute symbol."""
         return self._symbol
 
     def play(self, board):
-        """"function which gets the player's next move"""
+        """"Function which gets the player's next move."""
         pass
 
     def __str__(self):
-        """"dunder method str"""
+        """"Dunder method str."""
         return self._symbol
 
     def __eq__(self, other):
         """"
-        dunder method eq
-        they are compared on their symbols
+        Dunder method eq.
+        They are compared on their symbols.
         """
         if isinstance(other, self.__class__):
             return self._symbol == other.get_symbol()
@@ -57,23 +57,23 @@ class HumanPlayer(PlayerInterface):
     """
 
     def set_name(self):
-        """setter for the attribute name"""
+        """Setter for the attribute name."""
         return input(f"Player {self._symbol}, what is your name? >> ")
 
     def play(self, board):
         """
-        asks the user for their next move
+        Asks the user for their next move.
 
         Returns
         -------
         int
-            row of the next move's square
+            Row of the next move's square.
         int
-            column of the next move's square
+            Column of the next move's square.
 
         """
-        number = int(
-            input(f'{self._name}, which square would you like to play? >> ')) - 1
+        number = int(input(
+            f'{self._name}, which square would you like to play? >> ')) - 1
         return number // BOARD_SIZE, number % BOARD_SIZE
 
 
@@ -83,44 +83,44 @@ class MiniMaxPlayer(PlayerInterface):
     """
 
     def set_name(self):
-        """setter for the attribute name"""
+        """Setter for the attribute name."""
         return 'MiniMax'
 
     def set_other_player(self, other_player):
         """
-        setter for the attribute other player
+        Setter for the attribute other player.
 
         Parameters
         ----------
         other_player : PlayerInterface
-            the opponent of self.
+            The opponent of self.
 
         """
         self.__other_player = other_player
 
     def __minimax(self, board, maximizing, alpha, beta):
         """
-        applying minimax (with alpha-beta pruning) on the game
-        this implementation does not have a max depth, so it will
-        become very slow when expanding the board size
+        Applying minimax (with alpha-beta pruning) on the game.
+        This implementation does not have a max depth, so it will
+        become very slow when expanding the board size.
 
         Parameters
         ----------
         board : Board
-            the playing board.
+            The playing board.
         maximizing : bool
-            whether it is the maximizing or minimizing player's turn.
+            Whether it is the maximizing or minimizing player's turn.
         alpha : int
-            aplha-value.
+            Aplha-value.
         beta : int
-            beta-value.
+            Beta-value.
 
         Returns
         -------
         int
-            value of the move.
+            Value of the move.
         (int, int)
-            move corresponding the the square on the board.
+            Move corresponding the the square on the board.
 
         """
         if board.is_winner(self):
@@ -173,17 +173,17 @@ class MiniMaxPlayer(PlayerInterface):
 
     def play(self, board):
         """
-        gets the AI's next move
+        Gets the AI's next move.
 
         Returns
         -------
         int
-            row of the next move's square
+            Row of the next move's square.
         int
-            column of the next move's square
+            Column of the next move's square.
 
         """
-        sleep(2)
+        sleep(1.5)
         return self.__minimax(board, True, float('-inf'), float('inf'))[1]
 
 
@@ -191,21 +191,21 @@ class Board:
     """
     Class representing a the playing board
 
-    attributes:
+    Attributes:
         board (2d list):
-            matrix of size BOARD_SIZE x BOARD_SIZE representing the playing board
+            Matrix of size BOARD_SIZE x BOARD_SIZE representing the playing board.
     """
 
     def __init__(self, board=None):
         """
-        initialising board, creates an board full of zeroes
-        unless a board is given as parameter
-        then that board is passed to the attribute
+        Initialising board, creates an board full of zeroes.
+        Unless a board is given as parameter,
+        then that board is passed to the attribute.
 
         Parameters
         ----------
         board : 2d list, optional
-            matrix of size BOARD_SIZE x BOARD_SIZE representing the playing board.
+            Matrix of size BOARD_SIZE x BOARD_SIZE representing the playing board.
             The default is None.
         """
         if board is None:
@@ -215,8 +215,8 @@ class Board:
 
     def reset_board(self):
         """
-        creates an list from 1 to BOARD_SIZE and assigns it to the attribute board
-        the list is 2d with each list having a length of BOARD_SIZE
+        Creates an list from 1 to BOARD_SIZE and assigns it to the attribute board.
+        The list is 2d with each list having a length of BOARD_SIZE.
 
         """
         number = 1
@@ -231,44 +231,44 @@ class Board:
         self.__board = np.array(next_board, dtype=object)
 
     def get_board(self):
-        """getter of the attribute board"""
+        """Getter of the attribute board."""
         return self.__board
 
     def get_board_copy(self):
-        """"returns a copy of the attribute board"""
+        """"Returns a copy of the attribute board."""
         return Board(board=self.__board.copy())
 
     def is_winner(self, player):
         """
-        checks whether a players has won the game
+        Checks whether a players has won the game.
 
         Parameters
         ----------
         player : PlayerInterface
-            the player for who to check
+            The player for who to check.
 
         Returns
         -------
         bool
-            player has won
+            Player has won.
 
         """
         return self.__hori_vert_winner(player) or self.__digonal_winner(player)
 
     def __hori_vert_winner(self, player):
         """
-        checks whether a player has won
-        by lining up squares horizontally or vertically
+        Checks whether a player has won
+        by lining up squares horizontally or vertically.
 
         Parameters
         ----------
         player : PlayerInterface
-            the player for who to check
+            The player for who to check.
 
         Returns
         -------
         bool
-            player has won by placing sqaures horizontally or vertically
+            Player has won by placing sqaures horizontally or vertically.
 
         """
         # Checking for each row
@@ -283,18 +283,18 @@ class Board:
 
     def __digonal_winner(self, player):
         """
-        checks whether a player has won
-        by lineing up squares diagonally
+        Checks whether a player has won
+        by lining up squares diagonally.
 
         Parameters
         ----------
         player : PlayerInterface
-            the player for who to check
+            The player for who to check.
 
         Returns
         -------
         bool
-            player has won by placing sqaures diagonally
+            Player has won by placing sqaures diagonally.
 
         """
         # Top left to bottom right
@@ -318,20 +318,20 @@ class Board:
 
     def __has_winner(self, array, player):
         """
-        counts the amount of consecutive squares a player
-        has in an input list
+        Counts the amount of consecutive squares a player
+        has in an input list.
 
         Parameters
         ----------
         array : list
-            1-D list consisting of zeroes and PlayerInterfaces
+            1-D list consisting of zeroes and PlayerInterfaces.
         player : PlayerInterface
-            the player for who to check
+            The player for who to check.
 
         Returns
         -------
         bool
-            player has a GAME_N amount of consecutive squares
+            Player has a GAME_N amount of consecutive squares.
 
         """
         counter = 0
@@ -346,31 +346,31 @@ class Board:
 
     def play_board(self, selected_square, player):
         """
-        adds a player to a specified square on the board
+        Adds a player to a specified square on the board.
 
         Parameters
         ----------
         selected_square : (int, int)
-            coordinates of a square on the board
+            Coordinates of a square on the board.
         player : PlayerInterface
-            player which has to be placed on the board
+            Player which has to be placed on the board.
         """
         row, column = selected_square
         self.__board[row, column] = player
 
     def move_is_valid(self, selected_square):
         """
-        checks whether a move has already been played
+        Checks whether a move has already been played.
 
         Parameters
         ----------
         selected_square : (int, int)
-            coordinates of a square on the board
+            Coordinates of a square on the board.
 
         Returns
         -------
         bool
-            whether the square is still unoccupied
+            Whether the square is still unoccupied.
 
         """
         row, column = selected_square
@@ -378,12 +378,12 @@ class Board:
 
     def is_full(self):
         """
-        checks if all squares on the board are occupied
+        Checks if all squares on the board are occupied.
 
         Returns
         -------
         bool
-            whether every square on the board is occupies
+            Whether every square on the board is occupies.
 
         """
         for row in self.__board:
@@ -393,6 +393,15 @@ class Board:
         return True
 
     def get_open_squares(self):
+        """
+        Checks which squares of the board are still open.
+
+        Returns
+        -------
+        squares : list
+            List of squares that have not yet been played.
+
+        """
         squares = []
         for row in range(BOARD_SIZE):
             for column in range(BOARD_SIZE):
@@ -401,7 +410,7 @@ class Board:
         return squares
 
     def __str__(self):
-        """"dunder method str"""
+        """"Dunder method str of Board class."""
         t = u'\u2550' * 3   # Three horizontal, double lines
         l = u'\u2551'       # One vertical double line
         string = ''
@@ -438,13 +447,13 @@ class Game:
     """"
     Class containing the game logic
 
-    attributes:
+    Attributes:
         player1 (PlayerInterface):
-            the first player of the game
+            The first player of the game.
         player2 (PLayerInterface):
-            the second player of the game
+            The second player of the game.
         board (Board):
-            the playing board
+            The playing board.
     """
 
     def __init__(self):
@@ -491,20 +500,20 @@ class Game:
 
     def __get_turn(self, player):
         """
-        retrieves the next move of a player
-        also deals with potential misinput
+        Retrieves the next move of a player.
+        Also deals with potential misinput.
 
         Parameters
         ----------
         player : PlayerInterface
-            player whose move to retrieve
+            Player whose move to retrieve.
 
         Returns
         -------
         int
-            row of the next move's square
+            Row of the next move's square.
         int
-            column of the next move's square
+            Column of the next move's square.
 
         """
         try:
@@ -531,7 +540,7 @@ def yes_no_input():
     Returns
     -------
     str
-        y if the user ansewered yes, n if the users ansewred no
+        'y' if the user ansewered yes, 'n' if the users ansewred no.
 
     """
     try:
