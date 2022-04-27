@@ -29,8 +29,11 @@ class Card:
             string += '║Jo-║\n║ker║\n'
         else:
             string += '║ ' + suits_dict[self.suit] + ' ║\n'
-            if self.number == 10:
+            if self.number == '10':
                 string += '║10 ║\n'
             else:
                 string += '║ ' + str(self.number) + ' ║\n'
         return string + '╚═══╝'
+    
+    def back_of_card(self):
+        return '╔═══╗\n║T  ║\n║  H║\n╚═══╝'
