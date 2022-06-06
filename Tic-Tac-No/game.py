@@ -18,12 +18,12 @@ class PlayerInterface:
 
     def __init__(self, symbol):
         """"Constructor."""
-        self._symbol = symbol
-        self._name = self.set_name()
+        self.symbol = symbol
+        self.name = self.set_name()
 
     def get_name(self):
         """"Getter of the attribute name."""
-        return self._name
+        return self.name
 
     def set_name(self):
         """"Setter of the attribute name."""
@@ -31,7 +31,7 @@ class PlayerInterface:
 
     def get_symbol(self):
         """"Getter of the attribute symbol."""
-        return self._symbol
+        return self.symbol
 
     def play(self, board):
         """"Function which gets the player's next move."""
@@ -39,7 +39,7 @@ class PlayerInterface:
 
     def __str__(self):
         """"Dunder method str."""
-        return self._symbol
+        return self.symbol
 
     def __eq__(self, other):
         """"
@@ -47,7 +47,7 @@ class PlayerInterface:
         They are compared on their symbols.
         """
         if isinstance(other, self.__class__):
-            return self._symbol == other.get_symbol()
+            return self.symbol == other.get_symbol()
         return False
 
 
@@ -58,7 +58,7 @@ class HumanPlayer(PlayerInterface):
 
     def set_name(self):
         """Setter for the attribute name."""
-        return input(f"Player {self._symbol}, what is your name? >> ")
+        return input(f"Player {self.symbol}, what is your name? >> ")
 
     def play(self, board):
         """
@@ -73,7 +73,7 @@ class HumanPlayer(PlayerInterface):
 
         """
         number = int(input(
-            f'{self._name}, which square would you like to play? >> ')) - 1
+            f'{self.name}, which square would you like to play? >> ')) - 1
         return number // BOARD_SIZE, number % BOARD_SIZE
 
 
@@ -96,9 +96,9 @@ class MiniMaxPlayer(PlayerInterface):
             The opponent of self.
 
         """
-        self.__other_player = other_player
+        self.other_player = other_player
 
-    def __minimax(self, board, maximizing, alpha, beta):
+    def minimax(self, board, maximizing, alpha, beta):
         """
         Applying minimax (with alpha-beta pruning) on the game.
         This implementation does not have a max depth, so it will
@@ -125,7 +125,7 @@ class MiniMaxPlayer(PlayerInterface):
         """
         if board.is_winner(self):
             return 1, None
-        elif board.is_winner(self.__other_player):
+        elif board.is_winner(self.other_player):
             return -1, None
         elif board.is_full():
             return 0, None
@@ -139,7 +139,7 @@ class MiniMaxPlayer(PlayerInterface):
                     if board.move_is_valid(square):
                         new_board = board.get_board_copy()
                         new_board.play_board(square, self)
-                        new_value, new_move = self.__minimax(
+                        new_value, new_move = self.minimax(
                             new_board, not maximizing, alpha, beta)
                         alpha = max(new_value, alpha)
                         if new_value > value:
@@ -158,8 +158,8 @@ class MiniMaxPlayer(PlayerInterface):
                     square = row, column
                     if board.move_is_valid(square):
                         new_board = board.get_board_copy()
-                        new_board.play_board(square, self.__other_player)
-                        new_value, new_move = self.__minimax(
+                        new_board.play_board(square, self.other_player)
+                        new_value, new_move = self.minimax(
                             new_board, not maximizing, alpha, beta)
                         beta = min(new_value, beta)
                         if new_value < value:
@@ -184,7 +184,7 @@ class MiniMaxPlayer(PlayerInterface):
 
         """
         sleep(1.5)
-        return self.__minimax(board, True, float('-inf'), float('inf'))[1]
+        return self.minimax(board, True, float('-inf'), float('inf'))[1]
 
 
 class Board:
@@ -211,7 +211,7 @@ class Board:
         if board is None:
             self.reset_board()
         else:
-            self.__board = board
+            self.board = board
 
     def reset_board(self):
         """
@@ -228,15 +228,15 @@ class Board:
                 number += 1
             next_board.append(arr)
 
-        self.__board = np.array(next_board, dtype=object)
+        self.board = np.array(next_board, dtype=object)
 
     def get_board(self):
         """Getter of the attribute board."""
-        return self.__board
+        return self.board
 
     def get_board_copy(self):
         """"Returns a copy of the attribute board."""
-        return Board(board=self.__board.copy())
+        return Board(board=self.board.copy())
 
     def is_winner(self, player):
         """
@@ -253,9 +253,9 @@ class Board:
             Player has won.
 
         """
-        return self.__hori_vert_winner(player) or self.__digonal_winner(player)
+        return self.hori_vert_winner(player) or self.digonal_winner(player)
 
-    def __hori_vert_winner(self, player):
+    def hori_vert_winner(self, player):
         """
         Checks whether a player has won
         by lining up squares horizontally or vertically.
@@ -272,16 +272,16 @@ class Board:
 
         """
         # Checking for each row
-        for row in self.__board:
-            if self.__has_winner(row, player):
+        for row in self.board:
+            if self.has_winner(row, player):
                 return True
         # Checking for each column
-        for column in self.__board.transpose():
-            if self.__has_winner(column, player):
+        for column in self.board.transpose():
+            if self.has_winner(column, player):
                 return True
         return False
 
-    def __digonal_winner(self, player):
+    def digonal_winner(self, player):
         """
         Checks whether a player has won
         by lining up squares diagonally.
@@ -302,8 +302,8 @@ class Board:
             for column in range(BOARD_SIZE - GAME_N + 1):
                 array = []
                 for i in range(GAME_N):
-                    array.append(self.__board[row + i, column + i])
-                if self.__has_winner(array, player):
+                    array.append(self.board[row + i, column + i])
+                if self.has_winner(array, player):
                     return True
 
         # Top right to bottom left
@@ -311,12 +311,12 @@ class Board:
             for column in range(GAME_N - 1, BOARD_SIZE):
                 array = []
                 for i in range(GAME_N):
-                    array.append(self.__board[row + i, column - i])
-                if self.__has_winner(array, player):
+                    array.append(self.board[row + i, column - i])
+                if self.has_winner(array, player):
                     return True
         return False
 
-    def __has_winner(self, array, player):
+    def has_winner(self, array, player):
         """
         Counts the amount of consecutive squares a player
         has in an input list.
@@ -356,7 +356,7 @@ class Board:
             Player which has to be placed on the board.
         """
         row, column = selected_square
-        self.__board[row, column] = player
+        self.board[row, column] = player
 
     def move_is_valid(self, selected_square):
         """
@@ -374,7 +374,7 @@ class Board:
 
         """
         row, column = selected_square
-        return isinstance(self.__board[row, column], int)
+        return isinstance(self.board[row, column], int)
 
     def is_full(self):
         """
@@ -386,7 +386,7 @@ class Board:
             Whether every square on the board is occupies.
 
         """
-        for row in self.__board:
+        for row in self.board:
             for column in row:
                 if isinstance(column, int):
                     return False
@@ -405,7 +405,7 @@ class Board:
         squares = []
         for row in range(BOARD_SIZE):
             for column in range(BOARD_SIZE):
-                if not isinstance(self.__board[row, column], PlayerInterface):
+                if not isinstance(self.board[row, column], PlayerInterface):
                     squares.append((row, column))
         return squares
 
@@ -419,7 +419,7 @@ class Board:
             (BOARD_SIZE - 1) + t + u'\u2557\n'
 
         # Body of the board
-        for i, row in enumerate(self.__board):
+        for i, row in enumerate(self.board):
             for column in row:
                 nr_digits = len(str(column))
                 if isinstance(column, int):
@@ -458,10 +458,10 @@ class Game:
 
     def __init__(self):
         """Initializes the players and board. Initilizes one human and one AI player."""
-        self.__player1 = HumanPlayer(u'\u00D7')
-        self.__player2 = MiniMaxPlayer(u'\u25CB')
-        self.__player2.set_other_player(self.__player1)
-        self.__board = Board()
+        self.player1 = HumanPlayer(u'\u00D7')
+        self.player2 = MiniMaxPlayer(u'\u25CB')
+        self.player2.set_other_player(self.player1)
+        self.board = Board()
 
     def play_game(self):
         """The turn-based game logic is defined in this function."""
@@ -469,36 +469,36 @@ class Game:
         print('Would you like to go first?', end='')
         start = yes_no_input()
         if start == 'y':
-            player_turn = self.__player1
+            player_turn = self.player1
         else:
-            player_turn = self.__player2
+            player_turn = self.player2
 
         # One iteration of this loop is one player's turn
-        while not self.__board.is_full():
+        while not self.board.is_full():
             # Printing board and info
             print('>' * 10 + '<' * 10)
             print(f'{player_turn.get_name()}, it is your turn.')
-            print(self.__board)
+            print(self.board)
 
             # Player making their turn
-            turn = self.__get_turn(player_turn)
-            self.__board.play_board(turn, player_turn)
-            if self.__board.is_winner(player_turn):
+            turn = self.get_turn(player_turn)
+            self.board.play_board(turn, player_turn)
+            if self.board.is_winner(player_turn):
                 break
-            elif player_turn == self.__player1:
-                player_turn = self.__player2
+            elif player_turn == self.player1:
+                player_turn = self.player2
             else:
-                player_turn = self.__player1
+                player_turn = self.player1
 
         # Printing final messages
         print('>' * 10 + '<' * 10)
-        print(self.__board)
-        if self.__board.is_full():
+        print(self.board)
+        if self.board.is_full():
             print('It\'s a draw!!!')
         else:
             print(f'Congratulations {player_turn.get_name()}, you have won!')
 
-    def __get_turn(self, player):
+    def get_turn(self, player):
         """
         Retrieves the next move of a player.
         Also deals with potential misinput.
@@ -517,20 +517,20 @@ class Game:
 
         """
         try:
-            turn = player.play(self.__board)
+            turn = player.play(selfboard)
             row, column = turn
             assert 0 <= row < BOARD_SIZE
             assert 0 <= column < BOARD_SIZE
-            assert self.__board.move_is_valid(turn)
+            assert self.board.move_is_valid(turn)
             return row, column
         except ValueError:
             print('Please enter a NUMBER.')
-            return self.__get_turn(player)
+            return self.get_turn(player)
         except AssertionError:
             print(
                 f'Please enter a number between 0 and {BOARD_SIZE ** 2 + 1}.')
             print('If a square is already taken, you cannot play it again.')
-            return self.__get_turn(player)
+            return self.get_turn(player)
 
 
 def yes_no_input():
