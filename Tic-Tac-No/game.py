@@ -58,7 +58,7 @@ class HumanPlayer(PlayerInterface):
 
     def set_name(self):
         """Setter for the attribute name."""
-        return input(f"Player {self.symbol}, what is your name? >> ")
+        return 'Player'
 
     def play(self, board):
         """
@@ -84,7 +84,7 @@ class MiniMaxPlayer(PlayerInterface):
 
     def set_name(self):
         """Setter for the attribute name."""
-        return 'MiniMax'
+        return 'AI'
 
     def set_other_player(self, other_player):
         """
@@ -517,7 +517,7 @@ class Game:
 
         """
         try:
-            turn = player.play(selfboard)
+            turn = player.play(self.board)
             row, column = turn
             assert 0 <= row < BOARD_SIZE
             assert 0 <= column < BOARD_SIZE
@@ -564,7 +564,7 @@ if __name__ == '__main__':
             f'The top left number is 1 and the bottom right number is {BOARD_SIZE ** 2}.')
         print('If you don\'t understand the basic rules of Tic Tac Toe, just google them.')
 
-    # Plays a game untill the user's had enough
+    # Plays a game until the user's had enough
     while True:
         game = Game()
         game.play_game()
