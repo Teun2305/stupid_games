@@ -2,7 +2,7 @@ import numpy as np
 from time import sleep
 
 BOARD_SIZE = 3  # Size of one size of the board, the board is always a square
-GAME_N = 3      # Amount of squares in a line needed to win
+GAME_N = 3  # Amount of squares in a line needed to win
 
 
 class PlayerInterface:
@@ -411,8 +411,7 @@ class Board:
         l = '║'
         string = ''
         # Top row
-        string += '╔' + (t + '╦') * \
-            (BOARD_SIZE - 1) + t + '╗\n'
+        string += '╔' + (t + '╦') * (BOARD_SIZE - 1) + t + '╗\n'
 
         # Body of the board
         for i, row in enumerate(self.board):
