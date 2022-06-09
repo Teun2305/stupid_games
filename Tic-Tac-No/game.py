@@ -407,12 +407,12 @@ class Board:
 
     def __str__(self):
         """"Dunder method str of Board class."""
-        t = u'\u2550' * 3   # Three horizontal, double lines
-        l = u'\u2551'       # One vertical double line
+        t = '═══'
+        l = '║'
         string = ''
         # Top row
-        string += u'\u2554' + (t + u'\u2566') * \
-            (BOARD_SIZE - 1) + t + u'\u2557\n'
+        string += '╔' + (t + '╦') * \
+            (BOARD_SIZE - 1) + t + '╗\n'
 
         # Body of the board
         for i, row in enumerate(self.board):
@@ -431,11 +431,9 @@ class Board:
                     string += l + ' {} '.format(column)
             string += l + '\n'
             if i < BOARD_SIZE - 1:
-                string += u'\u2560' + (t + u'\u256C') * \
-                    (BOARD_SIZE - 1) + t + u'\u2563\n'
+                string += '╠' + (t + '╬') * (BOARD_SIZE - 1) + t + '╣\n'
         # Bottom Row
-        string += u'\u255A' + (t + u'\u2569') * \
-            (BOARD_SIZE - 1) + t + u'\u255D'
+        string += '╚' + (t + '╩') * (BOARD_SIZE - 1) + t + '╝'
         return string
 
 
