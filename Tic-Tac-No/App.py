@@ -79,12 +79,16 @@ class App:
                     x, y = pg.mouse.get_pos()
                     running = False
 
-        col = x // (self.width / 3)
+        col = int(x // (self.width / 3))
         if y > self.height:
             return self.user_click()
         else:
-            row = y // (self.height / 3)
-        return int(row), int(col)
+            row = int(y // (self.height / 3))
+        if isinstance(self.board.get_board()[row, col], game.PlayerInterface):
+            self.text(msg='Already taken, pick another')
+            return self.user_click()
+            
+        return row, col
 
     def update_visuals(self):
         for i, row in enumerate(self.board.get_board()):
