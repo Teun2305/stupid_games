@@ -11,9 +11,20 @@ import pygame as pg
 import game
 from time import sleep
 
-
+"""
+Class with the game logic .
+"""
 class App:
     def __init__(self, size):
+        """
+        Constructor for the App class.
+
+        Parameters
+        ----------
+        size : int/float
+            size of the display.
+
+        """
         self.games_played, self.ai_won, self.draw, self.human_won = 0, 0, 0, 0
         self.human = game.HumanPlayer('X')
         self.ai = game.MiniMaxPlayer('O')
@@ -21,6 +32,15 @@ class App:
         self.screen = Screen(size)
 
     def on_execute(self):
+        """
+        Handling the game logic.
+
+        Returns
+        -------
+        bool
+            False if the game is exited, true otherwise.
+
+        """
         human_playing = self.screen.yes_or_no('Would you like to go first?')
         if human_playing is None:
             return False
@@ -35,17 +55,20 @@ class App:
                     running = False
             if human_playing:
                 current_player = self.human
-                self.screen.text(current_player=current_player, human=self.human, ai=self.ai)
+                self.screen.text(current_player=current_player, 
+                                 human=self.human, ai=self.ai)
                 move = self.screen.user_click()
             else:
                 current_player = self.ai
-                self.screen.text(current_player=current_player, human=self.human, ai=self.ai)
+                self.screen.text(current_player=current_player, 
+                                 human=self.human, ai=self.ai)
                 move = self.ai.play(self.screen.board.get_board_copy())
             if move is None:
                 return False
 
             self.play(move, current_player)
-            self.screen.text(current_player=current_player, human=self.human, ai=self.ai)
+            self.screen.text(current_player=current_player, 
+                             human=self.human, ai=self.ai)
 
             winner = self.screen.is_winner(self.human, self.ai)
             won = winner > 0
@@ -65,12 +88,31 @@ class App:
         return True
 
     def play(self, move, player):
+        """
+        Calls the play function of the player's class in the game module.
+
+        Parameters
+        ----------
+        move : tuple (int, int)
+            row and column on the board to be played.
+        player : game.PlayerInterface
+            the one who is currently playing.
+
+        """
         self.screen.board.play_board(move, player)
 
     def reset_board(self):
+        """
+        Calls the reset method of the board.
+
+        """
         self.screen.board.reset_board()
 
     def print_results(self):
+        """
+        Prints a table of how many games were played and the win distribution.
+
+        """
         assert self.games_played == self.ai_won + self.draw + self.human_won
         ai_len = 10 + len(str(self.ai_won))
         draw_len = 8 + len(str(self.draw))
@@ -98,8 +140,20 @@ class App:
         print(string)
 
 
+"""
+Class handling all the display actions.
+"""
 class Screen:
     def __init__(self, size):
+        """
+        Constructor for the Screen class.
+
+        Parameters
+        ----------
+        size : int/float
+            size of the display.
+
+        """
         self.board = game.Board()
         self.width, self.height = size, size
         self.screen = pg.display.set_mode((self.width,
@@ -109,6 +163,19 @@ class Screen:
         pg.init()
 
     def load_images(self):
+        """
+        Loads the images used in the app.
+
+        Returns
+        -------
+        circle : Surface
+            Image of a circle.
+        cross : Surface
+            Image of a cross.
+        yes_no : Surface
+            Image of yes and no.
+
+        """
         o_img = pg.image.load('./images/circle.png')
         x_img = pg.image.load('./images/cross.png')
         yes_no_img = pg.image.load('./images/yes_no.png')
@@ -119,6 +186,10 @@ class Screen:
         return circle, cross, yes_no
 
     def draw_lines(self):
+        """
+        Draws the lines, such that the sqaures become visible.
+
+        """
         self.screen.fill((255, 255, 255))
         for i in range(4):
             pg.draw.line(self.screen, 0, (self.width / 3 * i, 0),
@@ -128,6 +199,22 @@ class Screen:
         pg.display.update()
 
     def text(self, current_player=None, human=None, ai=None, msg=None):
+        """
+        Shows either msg at the bottom of the display,
+        whose turn it is or wo has won.
+
+        Parameters
+        ----------
+        current_player : game.PlayerInterface, optional
+            Player whose turn it is. The default is None.
+        human : game,HumanPlayer, optional
+            The human player. The default is None.
+        ai : game.MiniMaxPlayer, optional
+            The AI player. The default is None.
+        msg : str, optional
+            Message to show. The default is None.
+
+        """
         if msg is None:
             situation = self.is_winner(human, ai)
             if situation == -1:
@@ -135,9 +222,9 @@ class Screen:
             elif situation == 0:
                 message = 'It\'s a draw'
             elif situation == 1:
-                message = f'The Player has won'
+                message = f'The {human.get_name()} has won'
             elif situation == 2:
-                message = f'The AI has won'
+                message = f'The {ai.get_name()} has won'
         else:
             message = msg
 
@@ -152,6 +239,17 @@ class Screen:
         pg.display.update()
 
     def user_click(self):
+        """
+        Handling the user's input, which is in the form of clicks.
+
+        Returns
+        -------
+        None
+            If the user decides to exit the app.
+        row, col : int, int
+            Tuple representing the column the player has chosen to play.
+
+        """
         running = True
         while running:
             for event in pg.event.get():
@@ -173,6 +271,10 @@ class Screen:
         return row, col
 
     def update_visuals(self):
+        """
+        Looping over the board and updating the visuals.
+
+        """
         for i, row in enumerate(self.board.get_board()):
             for j, col in enumerate(row):
                 if isinstance(col, game.HumanPlayer):
@@ -184,6 +286,15 @@ class Screen:
         pg.display.update()
 
     def draw_winning_line(self, current_player):
+        """
+        Draw a red line trough the three 'winning' squares on the board.
+
+        Parameters
+        ----------
+        current_player : game.PlayerInterface
+            The player who has won.
+
+        """
         line, n = self.get_position(current_player)
         if line == 'row':
             pg.draw.line(self.screen, (255, 0, 0),
@@ -204,6 +315,26 @@ class Screen:
         pg.display.update()
 
     def get_position(self, current_player):
+        """
+        Looking which in which direction the winning line has to be drawn,
+        and where it has to start.
+
+        Parameters
+        ----------
+        current_player : game.PlayerInterface
+            The player who has won.
+
+        Returns
+        -------
+        str
+            Description of the direction.
+        int
+            number of the staring column/row
+            or in case the str is 'dia':
+                0 -> top left to bottom right
+                1 -> top right to bottom left.
+
+        """
         b = self.board.get_board()
         for i, row in enumerate(b):
             if self.board.has_winner(row, current_player):
@@ -219,6 +350,20 @@ class Screen:
             return 'dia', 1
 
     def yes_or_no(self, message):
+        """
+        Shows the yes_no image on the display.
+
+        Parameters
+        ----------
+        message : str
+            Message that goes with the image.
+
+        Returns
+        -------
+        result : boolean
+            True if yes is chosen, False if no is chosen.
+
+        """
         self.screen.blit(self.yes_no, (0, 0))
         self.text(msg=message)
         running = True
@@ -233,6 +378,27 @@ class Screen:
         return result
 
     def is_winner(self, human, ai):
+        """
+        Return the situation of the game.
+        Whether either of the players has won, the game ended in a draw,
+        or the game has not finished yet.
+
+        Parameters
+        ----------
+        human : game.HumanPlayer
+            The human player.
+        ai : game.MiniMaxPlayer
+            The AI player.
+
+        Returns
+        -------
+        int
+            1 if the human player has won.
+            2 if the AI player has won.
+            0 if the game ended in a draw.
+            -1 if the game has not yet finished.
+
+        """
         if self.board.is_winner(human):
             return 1
         elif self.board.is_winner(ai):
