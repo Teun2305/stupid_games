@@ -10,17 +10,18 @@ Got inspiration from https://www.geeksforgeeks.org/tic-tac-toe-gui-in-python-usi
 import pygame as pg
 import game
 from time import sleep
-from pygame.locals import *
 
 
 class App:
     def __init__(self, size):
+        self.games_played, self.ai_won, self.draw, self.human_won = 0, 0, 0, 0
         self.human = game.HumanPlayer('X')
         self.ai = game.MiniMaxPlayer('O')
         self.ai.set_other_player(self.human)
         self.board = game.Board()
         self.width, self.height = size, size
-        self.screen = pg.display.set_mode((self.width, self.height + self.height / 5))
+        self.screen = pg.display.set_mode((self.width, 
+                                           self.height + self.height / 5))
         self.circle, self.cross, self.yes_no = self.load_images()
         pg.display.set_caption('Tic-Tac-No')
         pg.init()
@@ -38,8 +39,10 @@ class App:
     def draw_lines(self):
         self.screen.fill((255, 255, 255))
         for i in range(4):
-            pg.draw.line(self.screen, 0, (self.width / 3 * i, 0), (self.width / 3 * i, self.height), 7)
-            pg.draw.line(self.screen, 0, (0, self.height / 3 * i), (self.width, self.height / 3 * i), 7)
+            pg.draw.line(self.screen, 0, (self.width / 3 * i, 0), 
+                         (self.width / 3 * i, self.height), 7)
+            pg.draw.line(self.screen, 0, (0, self.height / 3 * i), 
+                         (self.width, self.height / 3 * i), 7)
         pg.display.update()
 
     def text(self, current_player=None, msg=None):
@@ -60,7 +63,8 @@ class App:
         font = pg.font.Font(None, self.width // 10)
         text = font.render(message, True, (255, 255, 255))
         self.screen.fill(0, (0, self.height, self.width, self.height / 5))
-        text_rect = text.get_rect(center=(self.width / 2, self.height + self.height / 10))
+        text_rect = text.get_rect(center=(self.width / 2, 
+                                          self.height + self.height / 10))
         self.screen.blit(text, text_rect)
         pg.font.quit()
         pg.display.update()
@@ -86,9 +90,11 @@ class App:
         for i, row in enumerate(self.board.get_board()):
             for j, col in enumerate(row):
                 if isinstance(col, game.HumanPlayer):
-                    self.screen.blit(self.cross, (self.width / 3 * j, self.height / 3 * i))
+                    self.screen.blit(self.cross, (self.width / 3 * j, 
+                                                  self.height / 3 * i))
                 elif isinstance(col, game.MiniMaxPlayer):
-                    self.screen.blit(self.circle, (self.width / 3 * j, self.height / 3 * i))
+                    self.screen.blit(self.circle, (self.width / 3 * j, 
+                                                   self.height / 3 * i))
         pg.display.update()
 
     def yes_or_no(self, message):
@@ -138,8 +144,14 @@ class App:
             self.update_visuals()
             human_playing = not human_playing
         if won:
-            print('won')
             self.draw_winning_line(current_player)
+            if current_player == self.ai:
+                self.ai_won += 1
+            else:
+                self.human_won += 1
+        else:
+            self.draw += 1
+        self.games_played += 1
         sleep(2)
         return True
 
@@ -160,18 +172,21 @@ class App:
 
     def draw_winning_line(self, current_player):
         line, n = self.get_position(current_player)
-        print(line, n)
         if line == 'row':
-            pg.draw.line(self.screen, (255, 0, 0), (self.width / 12, self.height / 6 + n * self.height / 3),
+            pg.draw.line(self.screen, (255, 0, 0), 
+                         (self.width / 12, self.height / 6 + n * self.height / 3), 
                          (self.width * 11 / 12, self.height / 6 + n * self.height / 3), 15)
         elif line == 'col':
-            pg.draw.line(self.screen, (255, 0, 0), (self.width / 6 + n * self.width / 3, self.height / 12),
+            pg.draw.line(self.screen, (255, 0, 0), 
+                         (self.width / 6 + n * self.width / 3, self.height / 12),
                          (self.width / 6 + n * self.width / 3, self.height * 11 / 12), 15)
         elif line == 'dia' and n == 0:
-            pg.draw.line(self.screen, (255, 0, 0), (self.width / 12, self.height / 12),
+            pg.draw.line(self.screen, (255, 0, 0), 
+                         (self.width / 12, self.height / 12),
                          (self.height * 11 / 12, self.height * 11 / 12), 15)
         elif line == 'dia' and n == 1:
-            pg.draw.line(self.screen, (255, 0, 0), (self.width * 11 / 12, self.height / 12),
+            pg.draw.line(self.screen, (255, 0, 0), 
+                         (self.width * 11 / 12, self.height / 12),
                          (self.height / 12, self.height * 11 / 12), 15)
         pg.display.update()
 
@@ -191,6 +206,33 @@ class App:
     def reset_board(self):
         self.board.reset_board()
 
+    def print_results(self):
+        assert self.games_played == self.ai_won + self.draw + self.human_won
+        ai_len = 10 + len(str(self.ai_won))
+        draw_len = 8 + len(str(self.draw))
+        human_len = 13 + len(str(self.human_won))
+        games_len = 20 + len(str(self.games_played))
+        string = '╔' + (ai_len + draw_len + human_len + 2) * '═' + '╗\n'
+        
+        whitespaces = len(string) - 3 - games_len
+        a, b = whitespaces // 2, whitespaces // 2
+        if whitespaces % 2 == 1:
+            b += 1
+        
+        string += '║' + a * ' '
+        string +=  f'Total games played: {self.games_played}'
+        string += b * ' ' + '║\n'
+        string += '╠' + ai_len * '═' + '╦'
+        string += draw_len * '═' + '╦'
+        string += human_len * '═' + '╣\n'
+        string += f'║ AI win: {self.ai_won} ║' 
+        string += f' Draw: {self.draw} ║'
+        string += f' Human win: {self.human_won} ║\n'
+        string += '╚' + ai_len * '═' + '╩'
+        string += draw_len * '═' + '╩'
+        string += human_len * '═' + '╝'
+        print(string)
+        
 
 if __name__ == '__main__':
     app = App(600)
@@ -201,5 +243,5 @@ if __name__ == '__main__':
         if reset is None or not reset:
             break
         app.reset_board()
+    app.print_results()
     pg.quit()
-    print('Goodbye!')
