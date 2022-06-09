@@ -79,7 +79,7 @@ class App:
             winner = self.screen.is_winner(self.human, self.ai)
             won = winner > 0
             draw = winner == 0
-            self.screen.update_visuals()
+            self.screen.update_visuals(move)
             human_playing = not human_playing
 
         # Draw the red line if someone has won            
@@ -299,21 +299,24 @@ class Screen:
 
         return row, col
 
-    def update_visuals(self):
+    def update_visuals(self, move):
         """
-        Looping over the board and updating the visuals.
+        Adds the latest move as a visual to the display
+
+        Parameters
+        ----------
+        move : (int, int)
+            The square of the board which has been played.
 
         """
-        # If the square is played by the human, make it a cross
-        # If the square is played by the AI, make it a circle
-        for i, row in enumerate(self.board.get_board()):
-            for j, col in enumerate(row):
-                if isinstance(col, game.HumanPlayer):
-                    self.screen.blit(self.cross, (self.width / 3 * j,
-                                                  self.height / 3 * i))
-                elif isinstance(col, game.MiniMaxPlayer):
-                    self.screen.blit(self.circle, (self.width / 3 * j,
-                                                   self.height / 3 * i))
+        row, col = move
+                    
+        if isinstance(self.board.get_board()[row, col], game.HumanPlayer):
+            self.screen.blit(self.cross, (self.width / 3 * col,
+                                          self.height / 3 * row))
+        elif isinstance(self.board.get_board()[row, col], game.MiniMaxPlayer):
+            self.screen.blit(self.circle, (self.width / 3 * col,
+                                           self.height / 3 * row))
         pg.display.update()
 
     def draw_winning_line(self, current_player):
