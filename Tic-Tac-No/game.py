@@ -253,7 +253,7 @@ class Board:
             Player has won.
 
         """
-        return self.hori_vert_winner(player) or self.digonal_winner(player)
+        return self.hori_vert_winner(player) or self.diagonal_winner(player)
 
     def hori_vert_winner(self, player):
         """
@@ -271,17 +271,13 @@ class Board:
             Player has won by placing sqaures horizontally or vertically.
 
         """
-        # Checking for each row
-        for row in self.board:
-            if self.has_winner(row, player):
-                return True
-        # Checking for each column
-        for column in self.board.transpose():
-            if self.has_winner(column, player):
+        # Checking for each row and column
+        for row, column in zip(self.board, self.board.transpose()):
+            if self.has_winner(row, player) or self.has_winner(column, player):
                 return True
         return False
 
-    def digonal_winner(self, player):
+    def diagonal_winner(self, player):
         """
         Checks whether a player has won
         by lining up squares diagonally.
