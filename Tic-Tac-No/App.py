@@ -50,22 +50,22 @@ class App:
         running = True
         won = False
         draw = False
-        
+
         # Main game loop, ends when the player exits or the game is over
         while running and not won and not draw:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
-            
+
             # Checks whose turn it is and makes a ask which square they'll play
             if human_playing:
                 current_player = self.human
-                self.screen.text(current_player=current_player, 
+                self.screen.text(current_player=current_player,
                                  human=self.human, ai=self.ai)
                 move = self.screen.user_click()
             else:
                 current_player = self.ai
-                self.screen.text(current_player=current_player, 
+                self.screen.text(current_player=current_player,
                                  human=self.human, ai=self.ai)
                 move = self.ai.play(self.screen.board.get_board_copy())
             if move is None:
@@ -73,7 +73,7 @@ class App:
 
             # Makes a play and updates the display and variables
             self.play(move, current_player)
-            self.screen.text(current_player=current_player, 
+            self.screen.text(current_player=current_player,
                              human=self.human, ai=self.ai)
 
             winner = self.screen.is_winner(self.human, self.ai)
@@ -126,7 +126,7 @@ class App:
         draw_len = 8 + len(str(self.draw))
         human_len = 13 + len(str(self.human_won))
         games_len = 20 + len(str(self.games_played))
-        
+
         # Top line
         string = '╔' + (ai_len + draw_len + human_len + 2) * '═' + '╗\n'
 
@@ -135,27 +135,27 @@ class App:
         a, b = whitespaces // 2, whitespaces // 2
         if whitespaces % 2 == 1:
             b += 1
-            
+
         # Second line
         string += '║' + a * ' '
         string += f'Total games played: {self.games_played}'
         string += b * ' ' + '║\n'
-        
+
         # Third line
         string += '╠' + ai_len * '═' + '╦'
         string += draw_len * '═' + '╦'
         string += human_len * '═' + '╣\n'
-        
+
         # Fourth line
         string += f'║ AI win: {self.ai_won} ║'
         string += f' Draw: {self.draw} ║'
         string += f' Human win: {self.human_won} ║\n'
-        
+
         # Bottom line
         string += '╚' + ai_len * '═' + '╩'
         string += draw_len * '═' + '╩'
         string += human_len * '═' + '╝'
-        
+
         print(string)
 
 
@@ -199,7 +199,7 @@ class Screen:
         o_img = pg.image.load('./images/circle.png')
         x_img = pg.image.load('./images/cross.png')
         yes_no_img = pg.image.load('./images/yes_no.png')
-        
+
         # Resizing the images
         size = self.width / 3 - self.width / 60
         circle = pg.transform.scale(o_img, (size, size))
@@ -213,7 +213,7 @@ class Screen:
 
         """
         self.screen.fill((255, 255, 255))
-        
+
         # Drawing the inner and outer lines 
         for i in range(4):
             pg.draw.line(self.screen, 0, (self.width / 3 * i, 0),
@@ -275,7 +275,7 @@ class Screen:
 
         """
         running = True
-        
+
         # Getting the user input
         while running:
             for event in pg.event.get():
@@ -291,7 +291,7 @@ class Screen:
             return self.user_click()
         else:
             row = int(y // (self.height / 3))
-            
+
         # Checking whether it has already been selected or not
         if isinstance(self.board.get_board()[row, col], game.PlayerInterface):
             self.text(msg='Already taken, pick another')
@@ -310,7 +310,7 @@ class Screen:
 
         """
         row, col = move
-                    
+
         if isinstance(self.board.get_board()[row, col], game.HumanPlayer):
             self.screen.blit(self.cross, (self.width / 3 * col,
                                           self.height / 3 * row))
@@ -331,7 +331,7 @@ class Screen:
         """
         # Get the type of line to draw
         line, n = self.get_position(current_player)
-        
+
         # Draw the line, depending on the type
         if line == 'row':
             pg.draw.line(self.screen, (255, 0, 0),
@@ -373,7 +373,7 @@ class Screen:
 
         """
         b = self.board.get_board()
-        
+
         # Check for a winner row
         for i, row in enumerate(b):
             if self.board.has_winner(row, current_player):
@@ -408,7 +408,7 @@ class Screen:
         self.screen.blit(self.yes_no, (0, 0))
         self.text(msg=message)
         running = True
-        
+
         # Checking user inputs
         while running:
             for event in pg.event.get():
@@ -416,7 +416,7 @@ class Screen:
                     return None
                 elif event.type == pg.MOUSEBUTTONUP:
                     x, y = pg.mouse.get_pos()
-                    
+
                     # If the player clicked in the top half of the display
                     result = y < self.height / 2
                     running = False
@@ -455,8 +455,8 @@ class Screen:
 
 
 if __name__ == '__main__':
-    app = App(600)
-    
+    app = App(800)
+
     # Main loop, breaks when the player exits or doesn't want to play anymore
     while True:
         if not app.on_execute():
@@ -465,6 +465,6 @@ if __name__ == '__main__':
         if reset is None or not reset:
             break
         app.reset_board()
-        
+
     app.print_results()
     pg.quit()
