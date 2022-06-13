@@ -461,9 +461,6 @@ if __name__ == '__main__':
     while True:
         if not app.on_execute():
             break
-        reset = app.screen.yes_or_no('Would you like to play again?')
-        if reset is None or not reset:
-            break
         app.reset_board()
 
     app.print_results()
