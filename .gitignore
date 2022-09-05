@@ -130,3 +130,11 @@ dmypy.json
 
 # idea
 .idea/
+
+# spreadsheets
+.csv
+.xlsx
+.xls
+.xlsm
+.dex
+.xl
