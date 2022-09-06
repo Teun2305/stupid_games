@@ -4,7 +4,9 @@ Created on Mon Sep  5 20:10:55 2022
 
 @author: teunh
 """
-
+import sys
+import schedule
+import time
 import smtplib
 import requests
 from datetime import date
@@ -102,9 +104,35 @@ def message():
     return msg.as_string()
 
 
+def get_mail_adresses():
+    """
+    Reads email adresses from a .csv file
+
+    Returns
+    -------
+    adresses : list
+        List containing the email adresses
+
+    """
+    adresses = list()
+    try: 
+        f = open('adresses.csv', 'r')
+        for adress in f:
+            if '\n' in adress:
+                adress = adress.replace('\n', '')
+            adresses.append(adress)
+        f.close()
+    except FileNotFoundError:
+        print('The file with the adresses has not been found.')
+    except Exception as exc:
+        print(f'An error occured: {exc}')
+
+    return adresses
+
+
 def mail():
     """
-    Sends out the mail via ochtendweerbericht@outlook.com to all the addresses
+    Sends out the mail via ochtendweerbericht@outlook.com to all the adresses
     in the list 'to'
 
     """
@@ -112,10 +140,9 @@ def mail():
     smtp.ehlo()
     smtp.starttls()
     smtp.login('ochtendweerbericht@outlook.com', 'password123')
-
-    to = ['ochtendweerbericht@outlook.com']
+    
     smtp.sendmail(from_addr='ochtendweerbericht@outlook.com',
-                  to_addrs=to, msg=message())
+                  to_addrs=get_mail_adresses(), msg=message())
     print('Mails sent successfully!!')
     smtp.quit()
 
