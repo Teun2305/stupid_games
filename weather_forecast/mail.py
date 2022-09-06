@@ -92,7 +92,7 @@ def message():
     msg['Subject'] = 'Weather forecast for today'
 
     date, summary, low_temp, low_time, high_temp, high_time, sun_rise, sun_set, rain = get_data()
-    text = f'Hi Jelmer, the weather forecast for {date} in Nijmegen is: {summary}\n' + \
+    text = f'Good morning, the weather forecast for {date} in Nijmegen is: {summary}\n' + \
            f'The lowest temperature of the day will be {low_temp}C at {low_time} ' + \
            f'and the highest will be {high_temp}C at {high_time}.\n' + \
            f'The sun will rise at {sun_rise} and set at {sun_set}.\n' + \
@@ -104,30 +104,30 @@ def message():
     return msg.as_string()
 
 
-def get_mail_adresses():
+def get_mail_addresses():
     """
-    Reads email adresses from a .csv file
+    Reads email addresses from a .csv file
 
     Returns
     -------
-    adresses : list
-        List containing the email adresses
+    addresses : list
+        List containing the email addresses
 
     """
-    adresses = list()
+    addresses = list()
     try: 
-        f = open('adresses.csv', 'r')
-        for adress in f:
-            if '\n' in adress:
-                adress = adress.replace('\n', '')
-            adresses.append(adress)
+        f = open('addresses.csv', 'r')
+        for address in f:
+            if '\n' in address:
+                address = address.replace('\n', '')
+            addresses.append(address)
         f.close()
     except FileNotFoundError:
-        print('The file with the adresses has not been found.')
+        print('The file with the addresses has not been found.')
     except Exception as exc:
-        print(f'An error occured: {exc}')
+        print(f'An error occurred: {exc}')
 
-    return adresses
+    return addresses
 
 
 def mail():
@@ -136,16 +136,19 @@ def mail():
     in the list 'to'
 
     """
+    email = 'ochtendweerbericht@outlook.com'
     smtp = smtplib.SMTP('smtp.office365.com', port=587)
     smtp.ehlo()
     smtp.starttls()
-    smtp.login('ochtendweerbericht@outlook.com', 'password123')
+    smtp.login(email, 'password123')
     
-    smtp.sendmail(from_addr='ochtendweerbericht@outlook.com',
-                  to_addrs=get_mail_adresses(), msg=message())
+    smtp.sendmail(from_addr=email,
+                  to_addrs=get_mail_addresses(), msg=message())
     print('Mails sent successfully!!')
     smtp.quit()
 
 
 if __name__ == '__main__':
     mail()
+    time.sleep(3)
+    sys.exit(0)
